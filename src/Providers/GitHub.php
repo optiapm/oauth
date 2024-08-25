@@ -58,13 +58,18 @@ class GitHub extends Provider
 
     public function suggestions(Registration $registration, $user, string $token)
     {
+       // var_dump($user);exit();
         $this->verifyEmail($email = $user->getEmail() ?: $this->getEmailFromApi($token));
 
         $registration
             ->provideTrustedEmail($email)
-            ->suggestUsername($user->getNickname() ?: '')
+            ->suggestUsername(strtolower($user->getNickname()) ?: '')
             ->provideAvatar(Arr::get($user->toArray(), 'avatar_url', ''))
             ->setPayload($user->toArray());
+
+            // Suggest nickname using full name
+        $fullName = Arr::get($user->toArray(), 'name', '');
+        $registration->suggest('nickname', $fullName);
     }
 
     private function getEmailFromApi(string $token)
