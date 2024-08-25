@@ -60,7 +60,6 @@ class LinkedIn extends Provider
             'redirectUri'     => $redirectUri,
         ]);
     }
-    
     public function suggestions(Registration $registration, $user, string $token)
     {
         $this->verifyEmail($email = $user->getEmail());
@@ -68,14 +67,14 @@ class LinkedIn extends Provider
         // Suggest username using first name
         $firstName = $user->getFirstName();
         $registration->provideTrustedEmail($email)
-            ->suggestUsername($firstName)
+            ->suggestUsername(strtolower($firstName))
             ->setPayload($user->toArray());
     
         // Suggest nickname using full name
         $fullName = $user->getFirstName() . ' ' . $user->getLastName();
         $registration->suggest('nickname', $fullName);
-    
-        $avatar = $user->getImageUrl();
+        
+        $avatar = $user->getAttribute('picture');
         if ($avatar) {
             $registration->provideAvatar($avatar);
         }
